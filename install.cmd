@@ -1,0 +1,1 @@
+mkdir "%USERPROFILE%\Proxy-CC" && copy Proxy-CC "%USERPROFILE%\Proxy-CC" && npm install && npm run startup  && cd "%USERPROFILE%\Proxy-CC" && npm install pm2 -g && npm install && pm2 start "%USERPROFILE%\Proxy-CC\terminal-cc.js"

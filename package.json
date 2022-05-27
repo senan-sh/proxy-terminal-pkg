@@ -1,0 +1,14 @@
+{
+  "name": "proxy-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "startup-creator.js",
+  "scripts": {
+    "startup": "node startup-creator.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "create-desktop-shortcuts": "^1.6.0"
+  }
+}

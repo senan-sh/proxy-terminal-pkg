@@ -1,0 +1,1 @@
+pm2 delete terminal-cc && pm2 kill && IF EXIST "%USERPROFILE%\Proxy-CC" RMDIR /S /Q "%USERPROFILE%\Proxy-CC" && DEL "%USERPROFILE%\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\terminal-run-script.cmd Shortcut.lnk"
