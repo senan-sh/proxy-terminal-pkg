@@ -10,7 +10,7 @@ const events = require('events');
 class CloseEmitter extends events.EventEmitter { };
 
 let env = require("./.env.json");
-const generateTcpClient = require("./utils/tcp-client-generator");
+const generateTcpClient = require("./tcp-client-generator");
 
 // Middleware for handling cors and json requests
 app.use(cors());
