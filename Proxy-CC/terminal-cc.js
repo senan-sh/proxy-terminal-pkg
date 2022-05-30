@@ -6,6 +6,7 @@ const httpProxy = require('http-proxy');
 const app = express();
 const { writeFile } = require("fs")
 const { spawn } = require("child_process");
+const generateTcpClient = require("./utils/tcp-client-generator");
 
 // Middleware for handling cors and json requests
 app.use(cors());
@@ -143,6 +144,25 @@ app.get("/restart_server", (req, res) => {
   });
 });
 
+app.get("/cancel", (req, res) => {
+  if (env.CURRENT_IP == null || !isCorrectIp(env.CURRENT_IP)) {
+    res.status(400).send("Please select current terminal IP address.");
+    return;
+  }
+
+  if (env.TERMINAL_PORT == null) {
+    res.status(400).send("Terminal port is not specified in configuration.");
+    return;
+  }
+  const tcpClient = generateTcpClient(env.CURRENT_IP, env.TERMINAL_PORT);
+  const CancelBody = require("./terminal-requests.string").CancelOperationRequest;
+
+  tcpClient.connect(remoteAddress, () => {
+    tcpClient.write(CancelBody);
+    tcpClient.end();
+    res.status(200).send();
+  });
+});
 
 
 
