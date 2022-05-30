@@ -165,6 +165,7 @@ app.get("/cancel", (req, res) => {
   }
   const tcpClient = generateTcpClient(env.CURRENT_IP, env.TERMINAL_PORT);
   const CancelBody = require("./terminal-requests.string").CancelOperationRequest;
+  const remoteAddress = { host: env.CURRENT_IP, port: env.TERMINAL_PORT };
 
   tcpClient.connect(remoteAddress, () => {
     tcpClient.write(CancelBody);
