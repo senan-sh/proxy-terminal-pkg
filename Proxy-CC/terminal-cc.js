@@ -1,11 +1,15 @@
 // Imports
 const express = require('express');
 const cors = require('cors');
-let env = require("./.env.json");
 const httpProxy = require('http-proxy');
 const app = express();
 const { writeFile } = require("fs")
 const { spawn } = require("child_process");
+
+const events = require('events');
+class CloseEmitter extends events.EventEmitter { };
+
+let env = require("./.env.json");
 const generateTcpClient = require("./utils/tcp-client-generator");
 
 // Middleware for handling cors and json requests
@@ -43,8 +47,12 @@ terminalProxy.on("econnreset", (err, req, res) => {
 });
 
 
-
-
+const closeEmitter = new CloseEmitter();
+terminalProxy.on("proxyReq", (proxyReq, req, res) => {
+  closeEmitter.on("close", () => {
+    req.socket.destroy();
+  })
+});
 
 
 // ======================================================================================
@@ -144,6 +152,7 @@ app.get("/restart_server", (req, res) => {
   });
 });
 
+// CHECK: Need testing, not sure it will work.
 app.get("/cancel", (req, res) => {
   if (env.CURRENT_IP == null || !isCorrectIp(env.CURRENT_IP)) {
     res.status(400).send("Please select current terminal IP address.");
@@ -163,6 +172,17 @@ app.get("/cancel", (req, res) => {
     res.status(200).send();
   });
 });
+
+// CHECK: Need testing, not sure it will work.
+app.get("/cancel_all", (req, res) => {
+  try {
+    closeEmitter.emit("close");
+    res.status(200).send();
+  } catch (error) {
+    console.log(error)
+    res.status(500).send("Error detected");
+  }
+})
 
 
 
