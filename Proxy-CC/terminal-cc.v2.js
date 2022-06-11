@@ -123,7 +123,6 @@ app.post("/", express.text(), async (req, res) => {
     .on("close", () => {
       requestStack.pop();
       res.status(200).send(terminalResponseBody);
-      console.log(terminalResponseBody)
     })
     .on("error", () => {
       console.log("Error")
