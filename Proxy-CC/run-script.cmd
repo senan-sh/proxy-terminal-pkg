@@ -1,1 +1,1 @@
-pm2 start "%USERPROFILE%\Proxy-CC\terminal-cc.v2.js"
+pm2 start "%USERPROFILE%\Proxy-CC\terminal-cc-v2.js"
