@@ -139,7 +139,7 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   clientRequest.write(req.body);
   clientRequest.end();
 });
-
+// CurrMNTTime> 0 200 08.06.2022 12:37:35 200 08.06.2022 12:37:35 0 13.06.2022 23:07:39 04:54
 
 // Test purpose wait request like terminal(simulating)
 
