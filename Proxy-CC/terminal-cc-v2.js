@@ -119,9 +119,8 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   const options = {
     method: "POST",
     headers: {
-      "Accept": "*/*",
       "Content-Type": "text/xml",
-      "Content-Length": Buffer.byteLength(req.body)
+      "Content-Length": Buffer.byteLength(req.body, "utf8")
     }
   };
 
