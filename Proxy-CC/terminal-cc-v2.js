@@ -132,8 +132,7 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
       res.status(200).send(terminalResponseBody);
     })
     .on("error", (e) => {
-      console.log("Error", e);
-      res.end();
+      console.log("Error", e)
     });
 
   requestStack.push(clientRequest)
