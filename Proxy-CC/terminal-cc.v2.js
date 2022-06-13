@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 let env = require("./.env.json");
 const { persistToEnv, isCorrectIp } = require('./utils');
-const TerminalRequestStack = require('./models/TerminalRequestStack');
+const TerminalRequestStack = require('./TerminalRequestStack');
 const http = require("http");
 
 const app = express();
