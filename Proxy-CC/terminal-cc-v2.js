@@ -107,15 +107,26 @@ app.get("/ip/:pos_id", (req, res) => {
 
 
 const terminalRequestScheme = "http";
-const options = { method: "POST" };
-app.post("/", express.text(), async (req, res) => {
+app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   if (env.CURRENT_IP == null || env.TERMINAL_PORT == null) {
     return res.status(400).send("Terminal port or ip not specified.");
   }
+  if (requestStack.stack.length !== 0) {
+    return res.status(400).send("Terminal is busy.");
+  }
   const target = `${terminalRequestScheme}://${env.CURRENT_IP}:${env.TERMINAL_PORT}`;
   let terminalResponseBody;
+  const options = {
+    method: "POST",
+    headers: {
+      "Accept": "*/*",
+      "Content-Type": "text/xml",
+      "Content-Length": Buffer.byteLength(req.body)
+    }
+  };
+
   const clientRequest = http
-    .request(target, options, (incomingMessage) => {
+    .request(target, { options }, (incomingMessage) => {
       incomingMessage.on("data", (dataAsChunk) => {
         terminalResponseBody = String(dataAsChunk);
       })
@@ -124,8 +135,8 @@ app.post("/", express.text(), async (req, res) => {
       requestStack.pop();
       res.status(200).send(terminalResponseBody);
     })
-    .on("error", () => {
-      console.log("Error")
+    .on("error", (e) => {
+      console.log("Error", e)
     });
 
   requestStack.push(clientRequest)
