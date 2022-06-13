@@ -118,14 +118,11 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   let terminalResponseBody;
   const options = {
     method: "POST",
-    headers: {
-      "Content-Type": "text/xml",
-      "Content-Length": Buffer.byteLength(req.body, "utf8")
-    }
+    headers: { ...req.headers }
   };
 
   const clientRequest = http
-    .request(target, { options }, (incomingMessage) => {
+    .request(target, options, (incomingMessage) => {
       incomingMessage.on("data", (dataAsChunk) => {
         terminalResponseBody = String(dataAsChunk);
       })
@@ -146,14 +143,8 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
 
 // Test purpose wait request like terminal(simulating)
 
-// app.all("/10", async (req, res) => {
-//   let text = "";
-//   req.on("data", (data) => {
-//     text = String(data);
-//   });
-//   setTimeout(() => {
-//     res.send(text)
-//   }, 10000)
+// app.all("/10", express.text({ type: "*/*" }), async (req, res) => {
+//   res.send("")
 // });
 
 app.all("/cancel_all", (req, res) => {
