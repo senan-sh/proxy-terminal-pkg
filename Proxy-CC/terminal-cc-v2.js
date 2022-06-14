@@ -115,7 +115,7 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
     return res.status(400).send("Terminal is busy.");
   }
   const target = `${terminalRequestScheme}://${env.CURRENT_IP}:${env.TERMINAL_PORT}`;
-  let terminalResponseBody;
+  let terminalResponseBody = "";
   const options = {
     method: "POST",
     // headers: { ...req.headers }
@@ -128,13 +128,14 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   const clientRequest = http
     .request(target, options, (incomingMessage) => {
       incomingMessage.on("data", (dataAsChunk) => {
-        terminalResponseBody = String(dataAsChunk);
-        console.log("Incoming terminal request headers:", incomingMessage.headers);
-        console.log("Incoming terminal request body:", terminalResponseBody);
+        terminalResponseBody += String(dataAsChunk);
+        console.log("Incoming terminal request headers:\n", incomingMessage.headers);
+        console.log("Incoming terminal request body:\n", terminalResponseBody);
       })
     })
     .on("close", () => {
       requestStack.pop();
+      console.log("This final message returns terminal -> proxy to browser client: \n", terminalResponseBody)
       res.status(200).send(terminalResponseBody);
     })
     .on("error", (e) => {
@@ -142,8 +143,8 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
     });
 
   requestStack.push(clientRequest)
-  console.log("Sending terminal request headers:", req.headers);
-  console.log("Sending terminal request body:", req.body);
+  console.log("Sending terminal request headers:\n", req.headers);
+  console.log("Sending terminal request body:\n", req.body);
   clientRequest.write(req.body);
   clientRequest.end();
 });
