@@ -118,13 +118,19 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
   let terminalResponseBody;
   const options = {
     method: "POST",
-    headers: { ...req.headers }
+    // headers: { ...req.headers }
+    headers: {
+      "Content-Type": req.headers['content-type'],
+      "Content-Length": req.headers['content-length']
+    }
   };
 
   const clientRequest = http
     .request(target, options, (incomingMessage) => {
       incomingMessage.on("data", (dataAsChunk) => {
         terminalResponseBody = String(dataAsChunk);
+        console.log("Incoming terminal request headers:", incomingMessage.headers);
+        console.log("Incoming terminal request body:", terminalResponseBody);
       })
     })
     .on("close", () => {
@@ -132,10 +138,12 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
       res.status(200).send(terminalResponseBody);
     })
     .on("error", (e) => {
-      console.log("Error", e)
+      console.log("Error", e);
     });
 
   requestStack.push(clientRequest)
+  console.log("Sending terminal request headers:", req.headers);
+  console.log("Sending terminal request body:", req.body);
   clientRequest.write(req.body);
   clientRequest.end();
 });
