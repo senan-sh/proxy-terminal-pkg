@@ -6,6 +6,7 @@ let env = require("./.env.json");
 const { persistToEnv, isCorrectIp } = require('./utils');
 const TerminalRequestStack = require('./TerminalRequestStack');
 const http = require("http");
+// const { spawn } = require('child_process');
 
 const app = express();
 // Middleware for handling cors and json requests
@@ -25,12 +26,34 @@ app.get("/version", (req, res) => {
 });
 // Return all ip address list
 app.get("/ip", (req, res) => {
-  console.log("ip")
   if (env == null) {
     return res.status(404).send("No specfied information in list.");
   }
   res.status(200).json(env);
 });
+
+// const _command = "pm2";
+// app.get("/clear_log", (req, res) => {
+//   const childProcess = spawn(_command, {
+//     detached: true,
+//     argv0: "flush terminal-cc-v2"
+//   });
+
+//   let statusCode = 200;
+
+//   childProcess
+//     .on("error",
+//       (e) => {
+//         console.error(e);
+//         statusCode = 500;
+//       }
+//     )
+//     .on("close",
+//       () => {
+//         return res.sendStatus(statusCode).send();
+//       }
+//     )
+// });
 
 // Change POS IP to specified ip string
 app.put("/change_pos_ip/:pos_id", (req, res) => {
@@ -129,8 +152,7 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
     .request(target, options, (incomingMessage) => {
       incomingMessage.on("data", (dataAsChunk) => {
         terminalResponseBody += String(dataAsChunk);
-        console.log("Incoming terminal request headers:\n", incomingMessage.headers);
-        console.log("Incoming terminal request body:\n", terminalResponseBody);
+        console.log("\n\n\nIncoming terminal request body:\n", terminalResponseBody);
       })
     })
     .on("close", () => {
@@ -143,8 +165,7 @@ app.post("/", express.text({ type: "*/*" }), async (req, res) => {
     });
 
   requestStack.push(clientRequest)
-  console.log("Sending terminal request headers:\n", req.headers);
-  console.log("Sending terminal request body:\n", req.body);
+  console.log("\n\n\nSending terminal request body:", req.body);
   clientRequest.write(req.body);
   clientRequest.end();
 });
