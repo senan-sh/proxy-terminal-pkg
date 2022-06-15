@@ -1,2 +1,12 @@
 1. Install `Node.js` from https://nodejs.org/en/download/;
 2. Run install.cmd;
+
+============================================
+Commands for inspection:
+- pm2 list => List all active processes
+- pm2 start terminal-cc-v2 => Start process
+- pm2 restart terminal-cc-v2 => Restart process
+- pm2 stop terminal-cc-v2 => Stop process
+- pm2 delete terminal-cc-v2 => Delete process
+- pm2 flush terminal-cc-v2 => Clear logs
+- pm2 logs terminal-cc-v2 => Watch logs
