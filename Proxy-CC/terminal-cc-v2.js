@@ -6,6 +6,9 @@ let env = require("./.env.json");
 const { persistToEnv, isCorrectIp } = require('./utils');
 const TerminalRequestStack = require('./TerminalRequestStack');
 const http = require("http");
+const { userInfo } = require("os");
+const { resolve } = require("path");
+const { truncate } = require("fs")
 // const { spawn } = require('child_process');
 
 const app = express();
@@ -186,6 +189,25 @@ app.all("/cancel_all", (req, res) => {
     res.status(500).send("Error occured");
   }
 });
+
+app.get("/clear_log", (req, res) => {
+  const logName = "terminal-cc-v2-out.log";
+  const logPath = resolve(userInfo().homedir, ".pm2", "logs", logName)
+  truncate(logPath, (err) => {
+    if (err) {
+      return res.status(500).send();
+    }
+    const errorLogName = "terminal-cc-v2-error.log";
+    const errorLogPath = resolve(userInfo().homedir, ".pm2", "logs", errorLogName)
+    truncate(errorLogPath, (err) => {
+      if (err) {
+        return res.status(500).send();
+      } else {
+        return res.status(200).send();
+      }
+    })
+  });
+})
 
 // Configure port
 const serverPort = /* env.SERVER_PORT || */ 6565;
